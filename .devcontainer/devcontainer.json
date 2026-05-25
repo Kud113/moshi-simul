@@ -1,0 +1,83 @@
+{
+  "name": "j-moshi-long-context",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "USER_UID": "1000",
+      "USER_GID": "1000"
+    }
+  },
+
+  // Both Claude Code (when it opens this repo in a devcontainer)
+  // and a local VSCode "Reopen in Container" will land on the same image.
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // The repository root is bind-mounted into the container at /workspace
+  // (matches the Dockerfile WORKDIR). Code edits on the host are live inside
+  // the container; nothing is baked into the image.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "workspaceFolder": "/workspace",
+
+  // GPU passthrough + IPC/ulimit settings required by Moshi / PyTorch DDP-style code.
+  // --network=host lets the container talk to the independently-started Ollama
+  // (:11434) and VOICEVOX (:50021) sidecars via localhost with no port mapping.
+  "runArgs": [
+    "--gpus=all",
+    "--ipc=host",
+    "--ulimit", "memlock=-1",
+    "--ulimit", "stack=67108864",
+    "--network=host"
+  ],
+
+  "containerEnv": {
+    "OLLAMA_BASE_URL": "http://localhost:11434",
+    "VOICEVOX_BASE_URL": "http://localhost:50021",
+    "HF_HOME": "/opt/hf-cache",
+    "HF_HUB_ENABLE_HF_TRANSFER": "1",
+    "TRANSFORMERS_CACHE": "/opt/hf-cache",
+    "TORCH_HOME": "/opt/torch-cache",
+    "PYTHONUNBUFFERED": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "JMOSHI_HF_REPO": "nu-dialogue/j-moshi-ext"
+  },
+
+  // Caches live in Docker-managed named volumes OUTSIDE the bind-mounted repo
+  // root, so model downloads persist across rebuilds without polluting the repo.
+  // Claude Code config too, so /login is not required after every rebuild.
+  "mounts": [
+    "source=jmoshi-hf-cache,target=/opt/hf-cache,type=volume",
+    "source=jmoshi-torch-cache,target=/opt/torch-cache,type=volume",
+    "source=jmoshi-claude-config,target=/home/vscode/.claude,type=volume"
+  ],
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["experiments/jmoshi_long_context/tests"]
+      }
+    }
+  }
+}

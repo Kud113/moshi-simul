@@ -1,0 +1,53 @@
+# Sidecars for the J-Moshi long-context evaluation harness.
+#
+# Usage:
+#   docker compose -f docker-compose.ollama.yml up -d
+#   docker exec -it ollama ollama pull qwen2.5:32b
+#
+# GPU allocation (matches spec section 6):
+#   GPU0 -> J-Moshi inference (used inside the devcontainer)
+#   GPU1 -> Ollama (script generation)
+#   GPU2 -> spare / VOICEVOX nvidia variant if you want it
+#
+# The devcontainer runs with --network=host, so localhost:11434 / :50021
+# inside the container hit these services directly.
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]
+
+  # CPU build is fine for evaluation harness use. Switch to
+  # voicevox/voicevox_engine:nvidia-latest if you want GPU acceleration.
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-latest
+    container_name: voicevox
+    restart: unless-stopped
+    ports:
+      - "50021:50021"
+    # Uncomment the block below to put VOICEVOX on GPU2:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ["2"]
+    #           capabilities: [gpu]
+
+volumes:
+  ollama-data:
