@@ -2,8 +2,22 @@ name: precommit
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'moshi/**'
+      - 'moshi_mlx/**'
+      - '.pre-commit-config.yaml'
+      - '.github/workflows/precommit.yml'
+      - '.github/actions/moshi_build/**'
+      - 'scripts/run_ci_when_installed.sh'
   pull_request:
     branches: [ main, refacto ]
+    paths:
+      - 'moshi/**'
+      - 'moshi_mlx/**'
+      - '.pre-commit-config.yaml'
+      - '.github/workflows/precommit.yml'
+      - '.github/actions/moshi_build/**'
+      - 'scripts/run_ci_when_installed.sh'
 
 jobs:
   run_precommit:

@@ -1,8 +1,16 @@
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust-ci.yml'
+      - '.github/actions/rust_build/**'
   pull_request:
     branches: [ main, refacto ]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust-ci.yml'
+      - '.github/actions/rust_build/**'
 
 name: Rust CI
 
