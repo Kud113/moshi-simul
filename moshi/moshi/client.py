@@ -54,7 +54,7 @@ class Connection:
             if self._done:
                 return
             await asyncio.sleep(0.001)
-            msg = self._opus_writer.read_bytes()
+            msg = self._opus_writer.read_bytes()  # pyright: ignore[reportAttributeAccessIssue]
             if len(msg) > 0:
                 try:
                     await self.websocket.send_bytes(b"\x01" + msg)
@@ -69,7 +69,7 @@ class Connection:
             if self._done:
                 return
             await asyncio.sleep(0.001)
-            pcm = self._opus_reader.read_pcm()
+            pcm = self._opus_reader.read_pcm()  # pyright: ignore[reportAttributeAccessIssue]
             if all_pcm_data is None:
                 all_pcm_data = pcm
             else:

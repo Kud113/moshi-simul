@@ -1,15 +1,8 @@
-# Upstream rust/ carries pre-existing clippy/fmt findings this fork does not
-# fix. Scope to the rust source tree so unrelated PRs (e.g. the experiments
-# harness) are not gated by that debt.
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'rust/**'
   pull_request:
     branches: [ main, refacto ]
-    paths:
-      - 'rust/**'
 
 name: Rust CI
 
