@@ -40,3 +40,9 @@ dev = [
     "pre-commit",
     "gradio-webrtc>=0.0.18"
 ]
+
+[tool.pyright]
+# torch re-exports its public API via star-imports from torch._C, which newer
+# pyright flags as reportPrivateImportUsage (e.g. torch.zeros "not exported").
+# These are false positives, so silence that one diagnostic.
+reportPrivateImportUsage = "none"
