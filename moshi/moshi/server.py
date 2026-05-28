@@ -112,7 +112,7 @@ class ServerState:
                 if close:
                     return
                 await asyncio.sleep(0.001)
-                pcm = opus_reader.read_pcm()
+                pcm = opus_reader.read_pcm()  # pyright: ignore[reportAttributeAccessIssue]
                 if pcm.shape[-1] == 0:
                     continue
                 if all_pcm_data is None:
@@ -155,7 +155,7 @@ class ServerState:
                 if close:
                     return
                 await asyncio.sleep(0.001)
-                msg = opus_writer.read_bytes()
+                msg = opus_writer.read_bytes()  # pyright: ignore[reportAttributeAccessIssue]
                 if len(msg) > 0:
                     await ws.send_bytes(b"\x01" + msg)
 

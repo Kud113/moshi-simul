@@ -33,6 +33,7 @@ impl BuildInfo {
     }
 }
 
+#[allow(dead_code)]
 pub struct WrapJson<T>(pub anyhow::Result<T>);
 
 impl<T: serde::Serialize> axum::response::IntoResponse for WrapJson<T> {
@@ -56,6 +57,7 @@ pub fn replace_env_vars(input: &str) -> String {
     .to_string()
 }
 
+#[allow(dead_code)]
 pub struct WrapBincode<T>(pub anyhow::Result<T>);
 
 impl<T: serde::Serialize> axum::response::IntoResponse for WrapBincode<T> {

@@ -53,7 +53,7 @@ class MoshiHandler(StreamHandler):
         _, array = frame
         array = array.squeeze().astype(np.float32) / 32768.0
         self.stream_writer.append_pcm(array)
-        bytes = b"\x01" + self.stream_writer.read_bytes()
+        bytes = b"\x01" + self.stream_writer.read_bytes()  # pyright: ignore[reportAttributeAccessIssue]
         self.ws.send(bytes)
 
     def generator(
@@ -66,7 +66,7 @@ class MoshiHandler(StreamHandler):
             if kind == 1:
                 payload = message[1:]
                 self.stream_reader.append_bytes(payload)
-                pcm = self.stream_reader.read_pcm()
+                pcm = self.stream_reader.read_pcm()  # pyright: ignore[reportAttributeAccessIssue]
                 if self.all_output_data is None:
                     self.all_output_data = pcm
                 else:
