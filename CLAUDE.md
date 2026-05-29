@@ -104,7 +104,7 @@ experiments/jmoshi_long_context/
 
 ## Sub-agents available
 
-Five specialists live in `.claude/agents/`. **You** (the main session) are the
+Seven specialists live in `.claude/agents/`. **You** (the main session) are the
 orchestrator — sub-agents cannot call other sub-agents. Delegate explicitly:
 
 | Agent | When to use |
@@ -114,6 +114,8 @@ orchestrator — sub-agents cannot call other sub-agents. Delegate explicitly:
 | `tts-synthesizer` | To turn a script JSON into a WAV + metadata JSON. |
 | `experiment-runner` | To run `run_long_dialogue.py` for one (config, audio) pair. |
 | `policy-comparator` | After a sweep, to diff summary.csv across policies. |
+| `progress-digest` | To regenerate `STATUS.md` from git history + spec §15 AC progress (read from claude.ai chat). |
+| `moshi-explainer` | To draft/verify `docs/moshi-internals.md` from the Moshi source under `moshi/`. |
 
 ### Standard orchestration recipe
 
